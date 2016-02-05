@@ -4,8 +4,8 @@
 
 #include "colors.inc"
 #include "math.inc"
-#include "Bezier.inc"
-#include "Arrows.inc"
+#include "bezier.inc"
+#include "arrows.inc"
 
 #declare x_theta_phi_radius=function(theta,phi,rad){rad*(cosd(theta))*(cosd(phi))}
 #declare y_theta_phi_radius=function(theta,phi,rad){rad*(sind(phi))}
@@ -114,7 +114,7 @@ plane {
 }
 
 
-#declare tex_image = texture{pigment{image_map{"deadmau5_model.PNG"} } scale (x+y)*16+z*1 translate z*2}
+#declare tex_image = texture{pigment{image_map{"deadmau5_model.png"} } scale (x+y)*16+z*1 translate z*2}
 
 /*
 box{
