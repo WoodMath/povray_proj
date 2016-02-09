@@ -20,10 +20,13 @@ global_settings {
 // ----------------------------------------
 
 camera {
-	location  <0.0, 1.5, -4.0>*2
-	direction 1.5*z
-	right     x*image_width/image_height
-	look_at   <0.0, 0.0,  0.0>
+//	orthographic
+	location	<0.0, 0.0, -1.0>*8
+	direction	1.5*z
+	right		x*image_width/image_height
+	up		y
+	look_at		<0.0, 0.0,  0.0>
+	translate	y*0.5
 }
 /*
 sky_sphere {
@@ -73,14 +76,15 @@ sphere {
 */
 // create a isosurface object - the equipotential surface
 
-sphere{
+cone{
 	0, 2.0
+	y, 2.0
 	pigment {rgbt 1} 
 	hollow finish{ ambient 0.000 diffuse 0.000 specular 0} 
 	interior{ 
 		media{ 
 			density {
-				spherical 
+				cylindrical 
 				density_map{
 					[0.0  rgbt <1.0,1.0,1.0,0.0>*0.00+t]
 					[0.1  rgbt <1.0,1.0,1.0,0.0>*0.02+t]
