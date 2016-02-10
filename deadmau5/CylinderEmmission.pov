@@ -10,7 +10,7 @@
 
 #include "colors.inc"
 #include "math.inc"
-
+#include "transforms.inc"
 ///*
 global_settings {
 	assumed_gamma 1.0
@@ -18,12 +18,15 @@ global_settings {
 //*/
 
 // ----------------------------------------
-
+#declare f_camera_size=5;
 camera {
-	location  <0.0, 1.5, -4.0>*2
-	direction 1.5*z
-	right     x*image_width/image_height
-	look_at   <0.0, 0.0,  0.0>
+//	orthographic
+	location	<0.0, 0.0, -1.0>*8
+	direction	1.5*z
+	right		x*image_width/image_height*f_camera_size
+	up		y*f_camera_size
+	look_at		<0.0, 0.0,  0.0>
+	translate	0.5
 }
 /*
 sky_sphere {
@@ -71,39 +74,47 @@ sphere {
   }
 }
 */
+
 // create a isosurface object - the equipotential surface
-#local v3_center=0;
-#local f_radius=1.0;
-sphere{
-	0, 2.0
+#local v3_vec_one=0*(x+y+z);
+#local v3_vec_two=y+0*z+1*x;
+#local f_radius=1;
+#local v3_diff=v3_vec_two-v3_vec_one;
+#local trans_matrix = Point_At_Trans(vnormalize(v3_diff));
+#local f_length = vlength(v3_diff);
+cylinder{
+	v3_vec_one, y, 2
+	pigment{color Green}
+///*
 	pigment {rgbt 1} 
 	hollow finish{ ambient 0.000 diffuse 0.000 specular 0} 
 	interior{ 
 		media{ 
 			density {
-				spherical 
+				cylindrical 
 				density_map{
+
 					[0.0  rgbt <1.0,1.0,1.0,0.0>*0.00+t]
 					[0.1  rgbt <1.0,1.0,1.0,0.0>*0.02+t]
 					[0.2  rgbt <1.0,1.0,1.0,0.0>*0.04+t]
 					[0.3  rgbt <1.0,1.0,1.0,0.0>*0.06+t]
-					[0.4  rgbt <1.0,1.0,1.0,0.0>*0.08+t]                                                              
+					[0.4  rgbt <1.0,1.0,1.0,0.0>*0.08+t]                   
 					[0.5  rgbt <1.0,1.0,1.0,0.0>*0.10+t]
 					[0.6  rgbt <1.0,1.0,1.0,0.0>*0.80+t]
 					[0.7  rgbt <1.0,1.0,1.0,0.0>*0.85+t]
 					[0.8  rgbt <1.0,1.0,1.0,0.0>*0.90+t]
-					[0.9  rgbt <1.0,1.0,1.0,0.0>*0.95+t]                                                                           
+					[0.9  rgbt <1.0,1.0,1.0,0.0>*0.95+t]
 					[1.0  rgbt <1.0,1.0,1.0,0.0>*1.00+t]
-
 				}  
-
-				scale 2.01
+				scale 2.01	
 			}
   
 			emission Green/1
 		}
 	}
-	scale f_radius
-	translate v3_center
+	scale f_radius*x+f_length*y+f_radius*z
+	transform{trans_matrix }
+	translate v3_vec_one	
+//*/	
 
 }
