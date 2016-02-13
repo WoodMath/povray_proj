@@ -126,3 +126,143 @@
 //        object{o_bezier pigment{color Yellow}}
         object{o_bezier }
 #end
+
+
+// create a isosurface object - the equipotential surface
+#local v3_center=0;
+#local f_radius=1.0;
+#macro obj_sphere(v3_center, f_radius
+sphere{
+	0, 2.0
+	pigment {rgbt 1} 
+	hollow finish{ ambient 0.000 diffuse 0.000 specular 0} 
+	interior{ 
+		media{ 
+			density {
+				spherical 
+				density_map{
+					[0.0  rgbt <1.0,1.0,1.0,0.0>*0.00+t]
+					[0.1  rgbt <1.0,1.0,1.0,0.0>*0.02+t]
+					[0.2  rgbt <1.0,1.0,1.0,0.0>*0.04+t]
+					[0.3  rgbt <1.0,1.0,1.0,0.0>*0.06+t]
+					[0.4  rgbt <1.0,1.0,1.0,0.0>*0.08+t]
+					[0.5  rgbt <1.0,1.0,1.0,0.0>*0.10+t]
+					[0.6  rgbt <1.0,1.0,1.0,0.0>*0.80+t]
+					[0.7  rgbt <1.0,1.0,1.0,0.0>*0.85+t]
+					[0.8  rgbt <1.0,1.0,1.0,0.0>*0.90+t]
+					[0.9  rgbt <1.0,1.0,1.0,0.0>*0.95+t]
+					[1.0  rgbt <1.0,1.0,1.0,0.0>*1.00+t]
+				}  
+				scale 2.01
+			}
+			emission Green/1
+		}
+	}
+	scale f_radius
+	translate v3_center
+}
+
+// create a isosurface object - the equipotential surface
+#local v3_vec_one=0*(x+y+z);
+#local v3_vec_two=y+0*z+1*x;
+#local f_radius=1;
+#local v3_diff=v3_vec_two-v3_vec_one;
+#local trans_matrix = Point_At_Trans(vnormalize(v3_diff));
+#local f_length = vlength(v3_diff);
+cylinder{
+	v3_vec_one, y, 2
+	pigment{color Green}
+///*
+	pigment {rgbt 1} 
+	hollow finish{ ambient 0.000 diffuse 0.000 specular 0} 
+	interior{ 
+		media{ 
+			density {
+				cylindrical 
+				density_map{
+					[0.0  rgbt <1.0,1.0,1.0,0.0>*0.00+t]
+					[0.1  rgbt <1.0,1.0,1.0,0.0>*0.02+t]
+					[0.2  rgbt <1.0,1.0,1.0,0.0>*0.04+t]
+					[0.3  rgbt <1.0,1.0,1.0,0.0>*0.06+t]
+					[0.4  rgbt <1.0,1.0,1.0,0.0>*0.08+t]
+					[0.5  rgbt <1.0,1.0,1.0,0.0>*0.10+t]
+					[0.6  rgbt <1.0,1.0,1.0,0.0>*0.80+t]
+					[0.7  rgbt <1.0,1.0,1.0,0.0>*0.85+t]
+					[0.8  rgbt <1.0,1.0,1.0,0.0>*0.90+t]
+					[0.9  rgbt <1.0,1.0,1.0,0.0>*0.95+t]
+					[1.0  rgbt <1.0,1.0,1.0,0.0>*1.00+t]
+				}  
+				scale 2.01	
+			}
+			emission Green/1
+		}
+	}
+	scale f_radius*x+f_length*y+f_radius*z
+	transform{trans_matrix }
+	translate v3_vec_one	
+//*/	
+
+}
+#macro glow_bezier_basis_vector(v0,v1,v2,v3)
+        #local f_start = 0;
+        #local f_stop = 1;
+        #local f_inc = f_start;        
+        #local f_step = 0.05;
+        #local o_bezier=merge{
+                //#local   (i_stop - i_start)/i_step + 1;    // number of specified sphere positions
+                #local f_inc = f_start;
+                #while(f_inc<f_stop)
+                        #local v_pos_1 = bezier_basis_p(v0,v1,v2,v3,f_inc)
+                        #local v_pos_2 = bezier_basis_p(v0,v1,v2,v3,f_inc+f_step)
+                       sphere{<v_pos_1.x,v_pos_1.y,v_pos_1.z>, v_pos_1.t  }
+                       cylinder{
+                                <v_pos_1.x,v_pos_1.y,v_pos_1.z>,
+                                <v_pos_2.x,v_pos_2.y,v_pos_2.z>, 
+								(v_pos_1.t + v_pos_2.t)/2
+                        }
+                        #local f_inc=f_inc+f_step;
+                #end
+                sphere{ <v_pos_2.x,v_pos_2.y,v_pos_2.z>, v_pos_2.t    }
+        }
+//        object{o_bezier pigment{color Yellow}}
+        object{o_bezier }
+#end
+
+#macro glow_bezier_basis_vector_n(v0,v1,v2,v3,n)
+        #local f_start = 0;
+        #local f_stop = 1;
+        #local f_inc = f_start;        
+        #local f_step = 1/pow(2,n);
+        #local o_bezier=merge{
+                //#local   (i_stop - i_start)/i_step + 1;    // number of specified sphere positions
+                #local f_inc = f_start;
+                #while(f_inc<f_stop)
+                        #local v_pos_1 = bezier_basis_p(v0,v1,v2,v3,f_inc)
+                        #local v_pos_2 = bezier_basis_p(v0,v1,v2,v3,f_inc+f_step)
+                        
+                       sphere{<v_pos_1.x,v_pos_1.y,v_pos_1.z>, v_pos_1.t  }
+                       cone{
+                                <v_pos_1.x,v_pos_1.y,v_pos_1.z>, v_pos_1.t,
+                                <v_pos_2.x,v_pos_2.y,v_pos_2.z>, v_pos_2.t
+                        }
+                        #local f_inc=f_inc+f_step;
+#ifdef(DEBUG)
+			#debug concat(" f_inc = ",str(f_inc,10,5),"\n")
+			#debug concat(" f_step = ",str(f_step,10,5),"\n")
+			#debug concat(" f_inc + f_step = ",str(f_inc+f_step,10,5),"\n")
+			#debug concat(" v_pos_1 = ",vstr(4,v_pos_1,",",0,5),"\n")
+			#debug concat(" v_pos_2 = ",vstr(4,v_pos_2,",",0,5),"\n")
+#end
+        
+                #end
+                sphere{ <v_pos_2.x,v_pos_2.y,v_pos_2.z>, v_pos_2.t    }
+        }
+#ifdef(DEBUG)
+	#debug concat(" v0 = ",vstr(4,v0,",",0,5),"\n")
+	#debug concat(" v1 = ",vstr(4,v1,",",0,5),"\n")
+	#debug concat(" v2 = ",vstr(4,v2,",",0,5),"\n")
+	#debug concat(" v3 = ",vstr(4,v3,",",0,5),"\n")
+#end
+//        object{o_bezier pigment{color Yellow}}
+        object{o_bezier }
+#end

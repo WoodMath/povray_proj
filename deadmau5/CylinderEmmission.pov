@@ -93,12 +93,11 @@ cylinder{
 			density {
 				cylindrical 
 				density_map{
-
 					[0.0  rgbt <1.0,1.0,1.0,0.0>*0.00+t]
 					[0.1  rgbt <1.0,1.0,1.0,0.0>*0.02+t]
 					[0.2  rgbt <1.0,1.0,1.0,0.0>*0.04+t]
 					[0.3  rgbt <1.0,1.0,1.0,0.0>*0.06+t]
-					[0.4  rgbt <1.0,1.0,1.0,0.0>*0.08+t]                   
+					[0.4  rgbt <1.0,1.0,1.0,0.0>*0.08+t]
 					[0.5  rgbt <1.0,1.0,1.0,0.0>*0.10+t]
 					[0.6  rgbt <1.0,1.0,1.0,0.0>*0.80+t]
 					[0.7  rgbt <1.0,1.0,1.0,0.0>*0.85+t]
@@ -108,8 +107,7 @@ cylinder{
 				}  
 				scale 2.01	
 			}
-  
-			emission Green/1
+			emission Blue/1
 		}
 	}
 	scale f_radius*x+f_length*y+f_radius*z
