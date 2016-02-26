@@ -4,7 +4,7 @@
 
 #include "colors.inc"
 #include "math.inc"
-#include "bezier.inc"
+#include "bezier_glow.inc"
 #include "arrows.inc"
 
 #declare x_theta_phi_radius=function(theta,phi,rad){rad*(cosd(theta))*(cosd(phi))}
@@ -29,11 +29,12 @@
 
 global_settings {
 	assumed_gamma 1.0
+//	samples 10,50
 }
 
 
 camera {
-//	orthographic 
+	orthographic 
 
 	location	0-18*z
 //	direction	1.5*z
@@ -127,7 +128,7 @@ box{
 #declare pig_arrow = pigment{color Blue transmit 0.850}
 #declare f_sphere_large_radius = 3.15;
 #declare f_sphere_small_radius = 0.08;
-#declare f_sweep_radius = 0.1;
+#declare f_sweep_radius = 0.3;
 
 #declare vect_sphere_center = -1.75*y+0.09*x;
 
@@ -308,14 +309,14 @@ union{
 
 
 
-
+#local raise_power=6;
 #declare obj_ears=
 merge{
-	object{bezier_basis_vector_n(v2_v0,v2_v1,v2_v2,v2_v3,6) }
-	object{bezier_basis_vector_n(v1_v0,v1_v1,v1_v2,v1_v3,6) }
-	object{bezier_basis_vector_n(v2_v0,v2_v1,v2_v2,v2_v3,6) rotate y*180 translate x*0.2}
-	object{bezier_basis_vector_n(v1_v0,v1_v1,v1_v2,v1_v3,6) rotate y*180 translate x*0.2}
-	pigment{pig_sphere_small}
+	object{glow_bezier_basis_vector_n(v2_v0,v2_v1,v2_v2,v2_v3,raise_power) }
+	object{glow_bezier_basis_vector_n(v1_v0,v1_v1,v1_v2,v1_v3,raise_power) }
+	object{glow_bezier_basis_vector_n(v2_v0,v2_v1,v2_v2,v2_v3,raise_power) rotate y*180 translate x*0.2}
+	object{glow_bezier_basis_vector_n(v1_v0,v1_v1,v1_v2,v1_v3,raise_power) rotate y*180 translate x*0.2}
+//	pigment{pig_sphere_small}
 }
 
 union{

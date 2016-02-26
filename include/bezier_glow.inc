@@ -1,4 +1,6 @@
-
+#include "transforms.inc"
+#include "colors.inc"
+//#declare DEBUG=1;
 //#declare factorial = function(C) { prod(i, 1, C, max(i,1)) }
 //#declare binom = function(n,k) { factorial(n)/factorial(k)/factorial(n-k) }
 //#declare coef = function(n,k,p) { binom(n,k)*pow(p,k)*pow(1-p,n-k) }
@@ -127,82 +129,94 @@
         object{o_bezier }
 #end
 
-
+#declare samples_min = 10;
+#declare samples_max = 100;
 // create a isosurface object - the equipotential surface
-#local v3_center=0;
-#local f_radius=1.0;
-#macro obj_sphere(v3_center, f_radius
-sphere{
-	0, 2.0
-	pigment {rgbt 1} 
-	hollow finish{ ambient 0.000 diffuse 0.000 specular 0} 
-	interior{ 
-		media{ 
-			density {
-				spherical 
-				density_map{
-					[0.0  rgbt <1.0,1.0,1.0,0.0>*0.00+t]
-					[0.1  rgbt <1.0,1.0,1.0,0.0>*0.02+t]
-					[0.2  rgbt <1.0,1.0,1.0,0.0>*0.04+t]
-					[0.3  rgbt <1.0,1.0,1.0,0.0>*0.06+t]
-					[0.4  rgbt <1.0,1.0,1.0,0.0>*0.08+t]
-					[0.5  rgbt <1.0,1.0,1.0,0.0>*0.10+t]
-					[0.6  rgbt <1.0,1.0,1.0,0.0>*0.80+t]
-					[0.7  rgbt <1.0,1.0,1.0,0.0>*0.85+t]
-					[0.8  rgbt <1.0,1.0,1.0,0.0>*0.90+t]
-					[0.9  rgbt <1.0,1.0,1.0,0.0>*0.95+t]
-					[1.0  rgbt <1.0,1.0,1.0,0.0>*1.00+t]
-				}  
-				scale 2.01
+//#local v3_center=0;
+//#local f_radius=1.0;
+#macro glow_sphere(v3_center, f_radius, c_emmission)
+	sphere{
+		0, 2.0
+//		pigment{Green}
+///*
+		pigment {rgbt 1}
+		hollow finish{ ambient 0.000 diffuse 0.000 specular 0} 
+		interior{ 
+			media{ 
+				density {
+					spherical 
+					density_map{
+						[0.0  rgbt <1.0,1.0,1.0,0.0>*0.00+t]
+						[0.1  rgbt <1.0,1.0,1.0,0.0>*0.02+t]
+						[0.2  rgbt <1.0,1.0,1.0,0.0>*0.04+t]
+						[0.3  rgbt <1.0,1.0,1.0,0.0>*0.06+t]
+						[0.4  rgbt <1.0,1.0,1.0,0.0>*0.08+t]
+						[0.5  rgbt <1.0,1.0,1.0,0.0>*0.10+t]
+						[0.6  rgbt <1.0,1.0,1.0,0.0>*0.80+t]
+						[0.7  rgbt <1.0,1.0,1.0,0.0>*0.85+t]
+						[0.8  rgbt <1.0,1.0,1.0,0.0>*0.90+t]
+						[0.9  rgbt <1.0,1.0,1.0,0.0>*0.95+t]
+						[1.0  rgbt <1.0,1.0,1.0,0.0>*1.00+t]
+					}  
+					scale 2.01
+				}
+				emission c_emmission
+				samples samples_min, samples_max
 			}
-			emission Green/1
 		}
+//*/
+		scale f_radius
+		translate v3_center
 	}
-	scale f_radius
-	translate v3_center
-}
-
+#end
 // create a isosurface object - the equipotential surface
 #local v3_vec_one=0*(x+y+z);
 #local v3_vec_two=y+0*z+1*x;
 #local f_radius=1;
-#local v3_diff=v3_vec_two-v3_vec_one;
-#local trans_matrix = Point_At_Trans(vnormalize(v3_diff));
-#local f_length = vlength(v3_diff);
-cylinder{
-	v3_vec_one, y, 2
-	pigment{color Green}
+#macro glow_cylinder(v3_vec_one, f_radius_one, v3_vec_two, f_radius_two, c_emmission)
+	#local v3_diff=v3_vec_two-v3_vec_one;
+	#local trans_matrix = Point_At_Trans(vnormalize(v3_diff));
+	#local f_length = vlength(v3_diff);
+	#local f_radius = (f_radius_one+f_radius_two)/2;
+	cylinder{
+		0, y, 2
+//		pigment{color Green}
 ///*
-	pigment {rgbt 1} 
-	hollow finish{ ambient 0.000 diffuse 0.000 specular 0} 
-	interior{ 
-		media{ 
-			density {
-				cylindrical 
-				density_map{
-					[0.0  rgbt <1.0,1.0,1.0,0.0>*0.00+t]
-					[0.1  rgbt <1.0,1.0,1.0,0.0>*0.02+t]
-					[0.2  rgbt <1.0,1.0,1.0,0.0>*0.04+t]
-					[0.3  rgbt <1.0,1.0,1.0,0.0>*0.06+t]
-					[0.4  rgbt <1.0,1.0,1.0,0.0>*0.08+t]
-					[0.5  rgbt <1.0,1.0,1.0,0.0>*0.10+t]
-					[0.6  rgbt <1.0,1.0,1.0,0.0>*0.80+t]
-					[0.7  rgbt <1.0,1.0,1.0,0.0>*0.85+t]
-					[0.8  rgbt <1.0,1.0,1.0,0.0>*0.90+t]
-					[0.9  rgbt <1.0,1.0,1.0,0.0>*0.95+t]
-					[1.0  rgbt <1.0,1.0,1.0,0.0>*1.00+t]
-				}  
-				scale 2.01	
+///*
+		pigment {rgbt 1} 
+		hollow finish{ ambient 0.000 diffuse 0.000 specular 0} 
+		interior{ 
+			media{ 
+				density {
+					cylindrical 
+					density_map{
+						[0.0  rgbt <1.0,1.0,1.0,0.0>*0.00+t]
+						[0.1  rgbt <1.0,1.0,1.0,0.0>*0.02+t]
+						[0.2  rgbt <1.0,1.0,1.0,0.0>*0.04+t]
+						[0.3  rgbt <1.0,1.0,1.0,0.0>*0.06+t]
+						[0.4  rgbt <1.0,1.0,1.0,0.0>*0.08+t]
+						[0.5  rgbt <1.0,1.0,1.0,0.0>*0.10+t]
+						[0.6  rgbt <1.0,1.0,1.0,0.0>*0.80+t]
+						[0.7  rgbt <1.0,1.0,1.0,0.0>*0.85+t]
+						[0.8  rgbt <1.0,1.0,1.0,0.0>*0.90+t]
+						[0.9  rgbt <1.0,1.0,1.0,0.0>*0.95+t]
+						[1.0  rgbt <1.0,1.0,1.0,0.0>*1.00+t]
+					}  
+					scale 2.01	
+				}
+				emission c_emmission
+				samples samples_min, samples_max
 			}
-			emission Green/1
 		}
-	}
-	scale f_radius*x+f_length*y+f_radius*z
-	transform{trans_matrix }
-	translate v3_vec_one	
-//*/	
+//*/
+		scale f_radius*x+f_length*y+f_radius*z
+		transform{trans_matrix }
+		translate v3_vec_one	
+	//*/	
 
-}
+	}
+#end
+
 #macro glow_bezier_basis_vector(v0,v1,v2,v3)
         #local f_start = 0;
         #local f_stop = 1;
@@ -214,15 +228,17 @@ cylinder{
                 #while(f_inc<f_stop)
                         #local v_pos_1 = bezier_basis_p(v0,v1,v2,v3,f_inc)
                         #local v_pos_2 = bezier_basis_p(v0,v1,v2,v3,f_inc+f_step)
-                       sphere{<v_pos_1.x,v_pos_1.y,v_pos_1.z>, v_pos_1.t  }
-                       cylinder{
-                                <v_pos_1.x,v_pos_1.y,v_pos_1.z>,
-                                <v_pos_2.x,v_pos_2.y,v_pos_2.z>, 
-								(v_pos_1.t + v_pos_2.t)/2
+                       object{glow_sphere(<v_pos_1.x,v_pos_1.y,v_pos_1.z>, v_pos_1.t, Green)  }
+                       object{glow_cylinder(
+                                	<v_pos_1.x,v_pos_1.y,v_pos_1.z>,
+                                	<v_pos_2.x,v_pos_2.y,v_pos_2.z>, 
+					(v_pos_1.t + v_pos_2.t)/2,
+					Green
+				)
                         }
                         #local f_inc=f_inc+f_step;
                 #end
-                sphere{ <v_pos_2.x,v_pos_2.y,v_pos_2.z>, v_pos_2.t    }
+                object{glow_sphere(<v_pos_2.x,v_pos_2.y,v_pos_2.z>, v_pos_2.t, Green)    }
         }
 //        object{o_bezier pigment{color Yellow}}
         object{o_bezier }
@@ -237,14 +253,18 @@ cylinder{
                 //#local   (i_stop - i_start)/i_step + 1;    // number of specified sphere positions
                 #local f_inc = f_start;
                 #while(f_inc<f_stop)
-                        #local v_pos_1 = bezier_basis_p(v0,v1,v2,v3,f_inc)
-                        #local v_pos_2 = bezier_basis_p(v0,v1,v2,v3,f_inc+f_step)
-                        
-                       sphere{<v_pos_1.x,v_pos_1.y,v_pos_1.z>, v_pos_1.t  }
-                       cone{
-                                <v_pos_1.x,v_pos_1.y,v_pos_1.z>, v_pos_1.t,
-                                <v_pos_2.x,v_pos_2.y,v_pos_2.z>, v_pos_2.t
-                        }
+			#local v_pos_1 = bezier_basis_p(v0,v1,v2,v3,f_inc)
+			#local v_pos_2 = bezier_basis_p(v0,v1,v2,v3,f_inc+f_step)
+                       
+			#local f_radius = (v_pos_1.t+v_pos_2.t)/2;
+			object{glow_sphere(<v_pos_1.x,v_pos_1.y,v_pos_1.z>, v_pos_1.t, Green)  }
+			object{
+				glow_cylinder(
+					<v_pos_1.x,v_pos_1.y,v_pos_1.z>, v_pos_1.t,
+                                	<v_pos_2.x,v_pos_2.y,v_pos_2.z>, v_pos_2.t
+					Green
+				)
+			}
                         #local f_inc=f_inc+f_step;
 #ifdef(DEBUG)
 			#debug concat(" f_inc = ",str(f_inc,10,5),"\n")
@@ -255,7 +275,7 @@ cylinder{
 #end
         
                 #end
-                sphere{ <v_pos_2.x,v_pos_2.y,v_pos_2.z>, v_pos_2.t    }
+                object{glow_sphere( <v_pos_2.x,v_pos_2.y,v_pos_2.z>, v_pos_2.t, Green)    }
         }
 #ifdef(DEBUG)
 	#debug concat(" v0 = ",vstr(4,v0,",",0,5),"\n")
